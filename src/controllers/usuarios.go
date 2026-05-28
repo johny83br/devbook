@@ -19,15 +19,20 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var usuario models.Usuario
-	err := json.Unmarshal(corpoRequisicao, &usuario)
-	if err != nil {
-		respostas.Erro(w, http.StatusBadRequest, err)
+	erro = json.Unmarshal(corpoRequisicao, &usuario)
+	if erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	if erro = usuario.Preparar(); erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
 
 	db, erro := banco.Conectar()
 	if erro != nil {
-		respostas.Erro(w, http.StatusInternalServerError, err)
+		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return
 	}
 	defer db.Close()
@@ -35,7 +40,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	repositorio := repositories.NovoRepositorioDeUsuarios(db)
 	usuario.ID, erro = repositorio.Criar(usuario)
 	if erro != nil {
-		respostas.Erro(w, http.StatusInternalServerError, err)
+		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return
 	}
 
@@ -44,7 +49,23 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 }
 
 func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Buscando usuários"))
+	nomeOuNick := r.URL.Query().Get("usuario")
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	usuarios, erro := repositorio.Buscar(nomeOuNick)
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	respostas.JSON(w, http.StatusOK, usuarios)
 }
 
 func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
