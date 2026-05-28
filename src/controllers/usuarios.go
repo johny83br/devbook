@@ -4,6 +4,7 @@ import (
 	"api/src/banco"
 	"api/src/models"
 	"api/src/repositories"
+	"api/src/respostas"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -13,20 +14,20 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	
 	corpoRequisicao, erro := ioutil.ReadAll(r.Body)
 	if erro != nil {
-		http.Error(w, "Erro ao ler o corpo da requisição", http.StatusBadRequest)
+		respostas.Erro(w, http.StatusUnprocessableEntity, erro)
 		return
 	}
 
 	var usuario models.Usuario
 	err := json.Unmarshal(corpoRequisicao, &usuario)
 	if err != nil {
-		http.Error(w, "Erro ao decodificar o corpo da requisição", http.StatusBadRequest)
+		respostas.Erro(w, http.StatusBadRequest, err)
 		return
 	}
 
 	db, erro := banco.Conectar()
 	if erro != nil {
-		http.Error(w, "Erro ao conectar ao banco de dados", http.StatusInternalServerError)
+		respostas.Erro(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
@@ -34,17 +35,11 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	repositorio := repositories.NovoRepositorioDeUsuarios(db)
 	usuario.ID, erro = repositorio.Criar(usuario)
 	if erro != nil {
-		http.Error(w, "Erro ao criar usuário", http.StatusInternalServerError)
+		respostas.Erro(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-
-	if err := json.NewEncoder(w).Encode(usuario); err != nil {
-		http.Error(w, "Erro ao converter o usuário para JSON", http.StatusInternalServerError)
-		return
-	}
+	respostas.JSON(w, http.StatusCreated, usuario)
 
 }
 
