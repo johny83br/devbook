@@ -2,8 +2,10 @@ package authenticate
 
 import (
 	"api/src/config"
+	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -28,8 +30,12 @@ func ValidarToken(r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(token)
-	return nil
+	
+	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return nil
+	}
+	
+	return errors.New("Token inválido")
 }
 
 func extrairToken(r *http.Request) string {
@@ -40,6 +46,24 @@ func extrairToken(r *http.Request) string {
 	}
 
 	return ""
+}
+
+func ExtrairUsuarioID(r *http.Request) (uint64, error) {
+	tokenString := extrairToken(r)
+	token, err := jwt.Parse(tokenString, retornarChaveDeVerificacao)
+	if err != nil {
+		return 0, err
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		usuarioID, erro := strconv.ParseUint(fmt.Sprintf("%.0f", claims["usuarioID"]), 10, 64)
+		if erro != nil {
+			return 0, err
+		}
+		return usuarioID, nil
+	}
+
+	return 0, errors.New("Token inválido")
 }
 
 func retornarChaveDeVerificacao(token *jwt.Token) (interface{}, error) {
