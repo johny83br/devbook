@@ -15,8 +15,8 @@ type Usuario struct {
 	CriadoEm 	time.Time 	`json:"criadoEm,omitempty"`
 }
 
-func (u *Usuario) Preparar() error {
-	if err := u.validar(); err != nil {
+func (u *Usuario) Preparar(etapa string) error {
+	if err := u.validar(etapa); err != nil {
 		return err
 	}
 
@@ -25,7 +25,7 @@ func (u *Usuario) Preparar() error {
 	return nil
 }
 
-func (u *Usuario) validar() error {
+func (u *Usuario) validar(etapa string) error {
 
 	if u.Nome == "" {
 		return errors.New("O nome é obrigatório e não pode ser vazio")
@@ -39,7 +39,7 @@ func (u *Usuario) validar() error {
 		return errors.New("O email é obrigatório e não pode ser vazio")
 	}
 
-	if u.Senha == "" {
+	if etapa == "cadastro" && u.Senha == "" {
 		return errors.New("A senha é obrigatória e não pode ser vazio")
 	}
 
