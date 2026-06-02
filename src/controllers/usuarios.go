@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"api/src/authenticate"
+	"api/src/autenticacao"
 	"api/src/banco"
-	"api/src/models"
-	"api/src/repositories"
+	"api/src/modelos"
+	"api/src/repositorios"
 	"api/src/respostas"
 	"api/src/security"
 	"encoding/json"
@@ -24,7 +24,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var usuario models.Usuario
+	var usuario modelos.Usuario
 	erro = json.Unmarshal(corpoRequisicao, &usuario)
 	if erro != nil {
 		respostas.Erro(w, http.StatusBadRequest, erro)
@@ -43,7 +43,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	usuario.ID, erro = repositorio.Criar(usuario)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
@@ -64,7 +64,7 @@ func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	usuarios, erro := repositorio.Buscar(nomeOuNick)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
@@ -90,7 +90,7 @@ func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	usuario, erro := repositorio.BuscarPorID(usuarioID)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
@@ -109,7 +109,7 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	seguidorID, erro := authenticate.ExtrairUsuarioID(r)
+	seguidorID, erro := autenticacao.ExtrairUsuarioID(r)
 	if erro != nil {
 		respostas.Erro(w, http.StatusUnauthorized, erro)
 		return
@@ -126,7 +126,7 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var usuario models.Usuario
+	var usuario modelos.Usuario
 	erro = json.Unmarshal(corpoRequisicao, &usuario)
 	if erro != nil {
 		respostas.Erro(w, http.StatusBadRequest, erro)
@@ -145,7 +145,7 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	if erro = repositorio.Atualizar(usuarioID, usuario); erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return
@@ -163,7 +163,7 @@ func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	seguidorID, erro := authenticate.ExtrairUsuarioID(r)
+	seguidorID, erro := autenticacao.ExtrairUsuarioID(r)
 	if erro != nil {
 		respostas.Erro(w, http.StatusUnauthorized, erro)
 		return
@@ -181,7 +181,7 @@ func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	if erro = repositorio.Deletar(usuarioID); erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return
@@ -199,7 +199,7 @@ func SeguirUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	seguidorID, erro := authenticate.ExtrairUsuarioID(r)
+	seguidorID, erro := autenticacao.ExtrairUsuarioID(r)
 	if erro != nil {
 		respostas.Erro(w, http.StatusUnauthorized, erro)
 		return
@@ -217,7 +217,7 @@ func SeguirUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	if erro = repositorio.Seguir(usuarioID, seguidorID); erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return
@@ -235,7 +235,7 @@ func PararDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	seguidorID, erro := authenticate.ExtrairUsuarioID(r)
+	seguidorID, erro := autenticacao.ExtrairUsuarioID(r)
 	if erro != nil {
 		respostas.Erro(w, http.StatusUnauthorized, erro)
 		return
@@ -253,7 +253,7 @@ func PararDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	if erro = repositorio.PararDeSeguir(usuarioID, seguidorID); erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return
@@ -278,7 +278,7 @@ func BuscarSeguidores(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	seguidores, erro := repositorio.BuscarSeguidores(usuarioID)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
@@ -304,7 +304,7 @@ func BuscarSeguindo(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	seguindo, erro := repositorio.BuscarSeguindo(usuarioID)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
@@ -316,7 +316,7 @@ func BuscarSeguindo(w http.ResponseWriter, r *http.Request) {
 
 func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
 
-	usuarioIDNoToken, erro := authenticate.ExtrairUsuarioID(r)
+	usuarioIDNoToken, erro := autenticacao.ExtrairUsuarioID(r)
 	if erro != nil {
 		respostas.Erro(w, http.StatusUnauthorized, erro)
 		return
@@ -335,7 +335,7 @@ func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
 	}
 
 	corpoRequisicao, erro := ioutil.ReadAll(r.Body)
-	var senha models.Senha
+	var senha modelos.Senha
 	erro = json.Unmarshal(corpoRequisicao, &senha)
 	if erro != nil {
 		respostas.Erro(w, http.StatusBadRequest, erro)
@@ -349,7 +349,7 @@ func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	senhaAtual, erro := repositorio.BuscarSenha(usuarioID)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)

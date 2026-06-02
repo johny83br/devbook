@@ -1,4 +1,4 @@
-package authenticate
+package autenticacao
 
 import (
 	"api/src/config"

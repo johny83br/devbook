@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"api/src/authenticate"
+	"api/src/autenticacao"
 	"api/src/banco"
-	"api/src/models"
-	"api/src/repositories"
+	"api/src/modelos"
+	"api/src/repositorios"
 	"api/src/respostas"
 	"api/src/security"
 )
@@ -21,7 +21,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var usuario models.Usuario
+	var usuario modelos.Usuario
 	erro = json.Unmarshal(corpoRquisicao, &usuario)
 	if erro != nil {
 		respostas.Erro(w, http.StatusBadRequest, erro)
@@ -35,7 +35,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	usuarioSalvoNoBanco, erro := repositorio.BuscarPorEmail(usuario.Email)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
@@ -47,7 +47,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, erro := authenticate.CriarToken(usuarioSalvoNoBanco.ID)
+	token, erro := autenticacao.CriarToken(usuarioSalvoNoBanco.ID)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return

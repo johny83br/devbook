@@ -1,7 +1,7 @@
-package repositories
+package repositorios
 
 import (
-	"api/src/models"
+	"api/src/modelos"
 	"database/sql"
 )
 
@@ -13,7 +13,7 @@ func NovoRepositorioDeUsuarios(db *sql.DB) *usuarios {
 	return &usuarios{db}
 }
 
-func (repositorio usuarios) Criar(usuario models.Usuario) (uint64, error) {
+func (repositorio usuarios) Criar(usuario modelos.Usuario) (uint64, error) {
 	statement, erro := repositorio.db.Prepare("INSERT INTO usuarios (nome, nick, email, senha) VALUES (?, ?, ?, ?)")
 	if erro != nil {
 		return 0, erro
@@ -33,7 +33,7 @@ func (repositorio usuarios) Criar(usuario models.Usuario) (uint64, error) {
 	return uint64(ultimoIDInserido), nil
 }
 
-func (repositorio usuarios) Buscar(nomeOuNick string) ([]models.Usuario, error) {
+func (repositorio usuarios) Buscar(nomeOuNick string) ([]modelos.Usuario, error) {
 	nomeOuNick = "%" + nomeOuNick + "%"
 
 	linhas, erro := repositorio.db.Query(
@@ -45,10 +45,10 @@ func (repositorio usuarios) Buscar(nomeOuNick string) ([]models.Usuario, error) 
 	}
 	defer linhas.Close()
 
-	var usuarios []models.Usuario
+	var usuarios []modelos.Usuario
 
 	for linhas.Next() {
-		var usuario models.Usuario
+		var usuario modelos.Usuario
 		if erro = linhas.Scan(&usuario.ID, &usuario.Nome, &usuario.Nick, &usuario.Email, &usuario.CriadoEm); erro != nil {
 			return nil, erro
 		}
@@ -59,27 +59,27 @@ func (repositorio usuarios) Buscar(nomeOuNick string) ([]models.Usuario, error) 
 	return usuarios, nil
 }
 
-func (repositorio usuarios) BuscarPorID(usuarioID uint64) (models.Usuario, error) {
+func (repositorio usuarios) BuscarPorID(usuarioID uint64) (modelos.Usuario, error) {
 	linha, erro := repositorio.db.Query(
 		"SELECT id, nome, nick, email, criadoEm FROM usuarios WHERE id = ?",
 		usuarioID,
 	)
 	if erro != nil {
-		return models.Usuario{}, erro
+		return modelos.Usuario{}, erro
 	}
 	defer linha.Close()
 
-	var usuario models.Usuario
+	var usuario modelos.Usuario
 	if linha.Next() {
 		if erro = linha.Scan(&usuario.ID, &usuario.Nome, &usuario.Nick, &usuario.Email, &usuario.CriadoEm); erro != nil {
-			return models.Usuario{}, erro
+			return modelos.Usuario{}, erro
 		}
 	}
 
 	return usuario, nil
 }
 
-func (repositorio usuarios) Atualizar(usuarioID uint64, usuario models.Usuario) error {
+func (repositorio usuarios) Atualizar(usuarioID uint64, usuario modelos.Usuario) error {
 	statement, erro := repositorio.db.Prepare("UPDATE usuarios SET nome = ?, nick = ?, email = ? WHERE id = ?")
 	if erro != nil {
 		return erro
@@ -109,20 +109,20 @@ func (repositorio usuarios) Deletar(usuarioID uint64) error {
 	return nil
 }
 
-func (repositorio usuarios) BuscarPorEmail(email string) (models.Usuario, error) {
+func (repositorio usuarios) BuscarPorEmail(email string) (modelos.Usuario, error) {
 	linha, erro := repositorio.db.Query(
 		"SELECT id, senha FROM usuarios WHERE email = ?",
 		email,
 	)
 	if erro != nil {
-		return models.Usuario{}, erro
+		return modelos.Usuario{}, erro
 	}
 	defer linha.Close()
 
-	var usuario models.Usuario
+	var usuario modelos.Usuario
 	if linha.Next() {
 		if erro = linha.Scan(&usuario.ID, &usuario.Senha); erro != nil {
-			return models.Usuario{}, erro
+			return modelos.Usuario{}, erro
 		}
 	}
 
@@ -159,7 +159,7 @@ func (repositorio usuarios) PararDeSeguir(usuarioID, seguidorID uint64) error {
 	return nil
 }
 
-func (repositorio usuarios) BuscarSeguidores(usuarioID uint64) ([]models.Usuario, error) {
+func (repositorio usuarios) BuscarSeguidores(usuarioID uint64) ([]modelos.Usuario, error) {
 	linhas, erro := repositorio.db.Query(
 		`SELECT u.id, u.nome, u.nick, u.email, u.criadoEm
 		FROM usuarios u
@@ -172,10 +172,10 @@ func (repositorio usuarios) BuscarSeguidores(usuarioID uint64) ([]models.Usuario
 	}
 	defer linhas.Close()
 
-	var seguidores []models.Usuario
+	var seguidores []modelos.Usuario
 
 	for linhas.Next() {
-		var seguidor models.Usuario
+		var seguidor modelos.Usuario
 		if erro = linhas.Scan(&seguidor.ID, &seguidor.Nome, &seguidor.Nick, &seguidor.Email, &seguidor.CriadoEm); erro != nil {
 			return nil, erro
 		}
@@ -186,7 +186,7 @@ func (repositorio usuarios) BuscarSeguidores(usuarioID uint64) ([]models.Usuario
 	return seguidores, nil
 }
 
-func (repositorio usuarios) BuscarSeguindo(usuarioID uint64) ([]models.Usuario, error) {
+func (repositorio usuarios) BuscarSeguindo(usuarioID uint64) ([]modelos.Usuario, error) {
 	linhas, erro := repositorio.db.Query(
 		`SELECT u.id, u.nome, u.nick, u.email, u.criadoEm
 		FROM usuarios u
@@ -199,10 +199,10 @@ func (repositorio usuarios) BuscarSeguindo(usuarioID uint64) ([]models.Usuario, 
 	}
 	defer linhas.Close()
 
-	var seguindo []models.Usuario
+	var seguindo []modelos.Usuario
 
 	for linhas.Next() {
-		var usuario models.Usuario
+		var usuario modelos.Usuario
 		if erro = linhas.Scan(&usuario.ID, &usuario.Nome, &usuario.Nick, &usuario.Email, &usuario.CriadoEm); erro != nil {
 			return nil, erro
 		}
@@ -238,7 +238,7 @@ func (repositorio usuarios) BuscarSenha(usuarioID uint64) (string, error) {
 	}
 	defer linha.Close()
 
-	var usuario models.Usuario
+	var usuario modelos.Usuario
 	if linha.Next() {
 		if erro = linha.Scan(&usuario.Senha); erro != nil {
 			return "", erro

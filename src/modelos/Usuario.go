@@ -1,4 +1,4 @@
-package models
+package modelos
 
 import (
 	"api/src/security"
