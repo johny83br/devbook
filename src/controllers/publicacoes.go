@@ -175,4 +175,45 @@ func AtualizarPublicacao(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func DeletarPublicacao(w http.ResponseWriter, r *http.Request) {}
+func DeletarPublicacao(w http.ResponseWriter, r *http.Request) {
+
+	usuarioID, erro := autenticacao.ExtrairUsuarioID(r)
+	if erro != nil {
+		respostas.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	parametros := mux.Vars(r)
+	publicacaoID, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
+	if erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioDePublicacoes(db)
+	publicacaoSalva, erro := repositorio.BuscarPorID(publicacaoID)
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	if publicacaoSalva.AutorID != usuarioID {
+		respostas.Erro(w, http.StatusForbidden, errors.New("Você não tem permissão para editar esta publicação"))
+		return
+	}
+
+	if erro = repositorio.Deletar(publicacaoID); erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	respostas.JSON(w, http.StatusNoContent, nil)
+
+}
