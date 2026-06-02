@@ -205,7 +205,7 @@ func DeletarPublicacao(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if publicacaoSalva.AutorID != usuarioID {
-		respostas.Erro(w, http.StatusForbidden, errors.New("Você não tem permissão para editar esta publicação"))
+		respostas.Erro(w, http.StatusForbidden, errors.New("Você não tem permissão para deletar esta publicação"))
 		return
 	}
 
