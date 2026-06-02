@@ -20,3 +20,14 @@ CREATE TABLE seguidores (
   FOREIGN KEY (seguidor_id) REFERENCES usuarios(id) ON DELETE CASCADE,
   PRIMARY KEY (usuario_id, seguidor_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `publicacoes` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `titulo` varchar(255) NOT NULL,
+  `conteudo` TEXT NOT NULL,
+  `autor_id` INT NOT NULL,
+  `curtidas` INT NOT NULL DEFAULT 0,
+  `criadaEm` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`autor_id`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
