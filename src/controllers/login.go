@@ -11,7 +11,7 @@ import (
 	"api/src/modelos"
 	"api/src/repositorios"
 	"api/src/respostas"
-	"api/src/security"
+	"api/src/seguranca"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +42,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if erro = security.VerificarSenha(usuarioSalvoNoBanco.Senha, usuario.Senha); erro != nil {
+	if erro = seguranca.VerificarSenha(usuarioSalvoNoBanco.Senha, usuario.Senha); erro != nil {
 		respostas.Erro(w, http.StatusUnauthorized, errors.New("A senha está incorreta"))
 		return
 	}

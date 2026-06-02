@@ -1,4 +1,4 @@
-package security
+package seguranca
 
 import "golang.org/x/crypto/bcrypt"
 

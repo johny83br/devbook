@@ -6,7 +6,7 @@ import (
 	"api/src/modelos"
 	"api/src/repositorios"
 	"api/src/respostas"
-	"api/src/security"
+	"api/src/seguranca"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -17,7 +17,7 @@ import (
 )
 
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
-	
+
 	corpoRequisicao, erro := ioutil.ReadAll(r.Body)
 	if erro != nil {
 		respostas.Erro(w, http.StatusUnprocessableEntity, erro)
@@ -356,12 +356,12 @@ func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if erro = security.VerificarSenha(senhaAtual, senha.Atual); erro != nil {
+	if erro = seguranca.VerificarSenha(senhaAtual, senha.Atual); erro != nil {
 		respostas.Erro(w, http.StatusUnauthorized, errors.New("A senha atual não condiz com a que está salva no banco"))
 		return
 	}
 
-	senhaComHash, erro := security.Hash(senha.Nova)
+	senhaComHash, erro := seguranca.Hash(senha.Nova)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return
