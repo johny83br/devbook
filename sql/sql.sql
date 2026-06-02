@@ -11,3 +11,12 @@ CREATE TABLE `usuarios` (
   `criadoEm` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE seguidores (
+  id INT NOT NULL AUTO_INCREMENT,
+  usuario_id INT NOT NULL,
+  seguidor_id INT NOT NULL,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+  FOREIGN KEY (seguidor_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+  PRIMARY KEY (usuario_id, seguidor_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
