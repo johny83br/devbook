@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"api/src/autenticacao"
 	"api/src/banco"
@@ -53,5 +54,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respostas.JSON(w, http.StatusOK, token)
+	usuarioID := strconv.FormatUint(usuarioSalvoNoBanco.ID, 10)
+
+	respostas.JSON(w, http.StatusOK, modelos.DadosAutenticacao{ID: usuarioID, Token: token})
 }
