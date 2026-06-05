@@ -3,8 +3,6 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
-	"log"
 	"net/http"
 	"webapp/src/respostas"
 )
@@ -20,7 +18,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	confirmarSenha := r.FormValue("confirmar_senha")
 
 	if senha != confirmarSenha {
-		log.Fatal(errors.New("As senhas não conferem"))
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: "As senhas não conferem"})
 		return
 	}
 
