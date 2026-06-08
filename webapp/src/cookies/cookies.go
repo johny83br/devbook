@@ -36,3 +36,17 @@ func Salvar(w http.ResponseWriter, nome string, valor string) error {
 
 	return nil
 }
+
+func Ler(r *http.Request) (map[string]string, error) {
+	cookie, erro := r.Cookie("cookie-devbook")
+	if erro != nil {
+		return nil, erro
+	}
+
+	valores := make(map[string]string)
+	if erro = s.Decode("cookie-devbook", cookie.Value, &valores); erro != nil {
+		return nil, erro
+	}
+
+	return valores, nil
+}
