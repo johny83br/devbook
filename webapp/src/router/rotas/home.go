@@ -2,7 +2,7 @@ package rotas
 
 import (
 	"net/http"
-	"webapp/controllers"
+	"webapp/src/controllers"
 )
 
 var rotaPaginaPrincipal = Rota{
