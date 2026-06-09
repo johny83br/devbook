@@ -1,13 +1,13 @@
 {{ define "curtidas" }}
-<span>{{ .Curtidas }} curtidas</span>
+<span><i class="fa-solid fa-heart"></i> {{ .Curtidas }} Curtidas</span>
 {{ end }}
 
 {{ define "editar" }}
-<a href="/editar" class="btn btn-sm btn-primary">Editar</a>
+<a href="/editar" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
 {{ end }}
 
 {{ define "deletar" }}
-<a href="/deletar" class="btn btn-sm btn-danger">Deletar</a>
+<a href="/deletar" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i> Deletar</a>
 {{ end }}
 
 {{ define "cabecalho-publicacao" }}
@@ -21,7 +21,7 @@
 <div class="jumbotron" data-publicacao-id="{{ .ID }}">
   {{ template "cabecalho-publicacao" . }}
   <p>
-    {{ template "curtidas" . }}
+    {{ template "curtidas" . }} 
   </p>
   <p>
     {{ template "editar" }}
