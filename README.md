@@ -19,7 +19,7 @@ A proposta do projeto é demonstrar, de forma prática, como diferentes camadas 
                                   ▼
                      ┌────────────────────────┐
                      │       DevBook          │
-                     │        WebApp           │
+                     │        WebApp          │
                      │                        │
                      │ Go + HTML + JavaScript │
                      └────────────┬───────────┘
