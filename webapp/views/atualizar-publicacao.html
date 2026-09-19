@@ -18,7 +18,7 @@
   <div class="container-fluid">
     <div class="row mt-4">
       <div class="col-12">
-        <h3>Editar Publicação</h3>
+        <h3>Atualizar Publicação</h3>
         <div class="form-group">
           <label for="titulo" class="form-label">Título</label>
           <input type="text" class="form-control" id="titulo" name="titulo" value="{{ .Titulo }}"
@@ -29,8 +29,8 @@
           <textarea class="form-control" id="conteudo" name="conteudo" rows="5"
             placeholder="Insira o conteúdo da sua publicação" required>{{ .Conteudo }}</textarea>
         </div>
-        <button class="btn btn-info mt-3" data-publicacao-id="{{ .ID }}" id="atualizar-publicacao">Atualizar
-          Publicação</button>
+        <button class="btn btn-info mt-3 atualizar-publicacao" data-publicacao-id="{{ .ID }}">Salvar
+          Alterações</button>
       </div>
     </div>
   </div>
@@ -38,6 +38,8 @@
   {{ template "rodape" }}
 
   {{ template "scripts" }}
+
+  <script src="/assets/js/publicacoes.js"></script>
 
 </body>
 
