@@ -4,7 +4,7 @@
 {{ end }}
 
 {{ define "editar" }}
-<a href="/editar" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
+<a href="/publicacoes/{{ .ID }}/editar" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
 {{ end }}
 
 {{ define "deletar" }}
@@ -25,8 +25,8 @@
     {{ template "curtidas" . }}
   </p>
   <p>
-    {{ template "editar" }}
-    {{ template "deletar" }}
+    {{ template "editar" . }}
+    {{ template "deletar" . }}
   </p>
 </div>
 {{ end }}
