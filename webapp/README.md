@@ -1,29 +1,40 @@
 # DevBook WebApp
 
-Aplicação web do **DevBook**, desenvolvida em **Go**, responsável pela interface e pela camada de comunicação entre o usuário e a **DevBook API**.
+Aplicação web do **DevBook**, desenvolvida em **Go**, responsável pela interface da rede social e pela comunicação com a **DevBook API**.
 
-Enquanto a API concentra as regras de negócio e o acesso ao banco de dados, este projeto funciona como a aplicação web que apresenta as páginas da plataforma, processa formulários, mantém a sessão do usuário e encaminha as operações para a API REST.
+O WebApp concentra a camada de apresentação, renderiza as páginas HTML no servidor, gerencia a sessão do usuário por meio de cookies seguros e encaminha as operações autenticadas para a API REST.
 
 ## 🧩 Sobre o projeto
 
-O **DevBook WebApp** é a camada web de uma aplicação no estilo rede social para desenvolvedores.
+O **DevBook WebApp** faz parte do ecossistema DevBook e funciona como a camada de interação com o usuário.
 
-A aplicação permite que o usuário:
+Além das funcionalidades de autenticação e publicações, a versão atual também contempla recursos de gerenciamento de usuários e relacionamento entre usuários.
 
-- Acesse a tela de login
-- Crie uma nova conta
-- Faça autenticação
-- Acesse a página principal
-- Visualize publicações
-- Crie novas publicações
-- Curta publicações
-- Remova curtidas
+Entre as principais funcionalidades estão:
 
-A aplicação utiliza templates HTML renderizados no servidor e JavaScript/jQuery para realizar operações assíncronas, principalmente na criação e interação com publicações.
+- Login e logout
+- Cadastro de usuários
+- Busca de usuários
+- Visualização de perfis
+- Visualização de seguidores e usuários seguidos
+- Seguir e deixar de seguir usuários
+- Visualização do perfil do usuário autenticado
+- Edição dos dados do usuário
+- Atualização de senha
+- Exclusão permanente da conta
+- Criação de publicações
+- Visualização do feed
+- Curtir e descurtir publicações
+- Atualização de publicações
+- Exclusão de publicações
+- Navegação com indicação da página ativa
+- Alertas e confirmações utilizando SweetAlert2
+
+A aplicação utiliza **Go Templates** para renderização server-side e **JavaScript/jQuery** para interações assíncronas com as rotas do próprio WebApp.
 
 ## 🏗️ Arquitetura
 
-O projeto funciona como um cliente web para a **DevBook API**:
+O WebApp atua como cliente da DevBook API:
 
 ```text
 ┌─────────────────────┐
@@ -31,27 +42,26 @@ O projeto funciona como um cliente web para a **DevBook API**:
 └──────────┬──────────┘
            │
            ▼
-┌─────────────────────┐
-│    DevBook WebApp   │
-│                     │
-│ Go + HTML Templates │
-│ JavaScript + jQuery │
-└──────────┬──────────┘
-           │ HTTP / JSON
-           ▼
-┌─────────────────────┐
-│     DevBook API     │
-│                     │
-│       Go REST       │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│       MySQL         │
-└─────────────────────┘
+┌─────────────────────────────┐
+│        DevBook WebApp       │
+│                             │
+│ Go + Templates + JavaScript │
+└──────────────┬──────────────┘
+               │ HTTP / JSON
+               ▼
+┌─────────────────────────────┐
+│         DevBook API         │
+│                             │
+│        Go + REST API        │
+└──────────────┬──────────────┘
+               │
+               ▼
+┌─────────────────────────────┐
+│            MySQL            │
+└─────────────────────────────┘
 ```
 
-Essa separação permite que a interface web e a API sejam executadas como aplicações independentes.
+A separação entre WebApp e API permite manter a camada de apresentação independente das regras de negócio e da persistência.
 
 ## 🛠️ Tecnologias utilizadas
 
@@ -72,12 +82,14 @@ Essa separação permite que a interface web e a API sejam executadas como aplic
 - jQuery
 - Bootstrap
 - Font Awesome
+- SweetAlert2
 
 ### Comunicação
 
 - HTTP
 - JSON
-- REST API
+- API REST
+- AJAX
 
 ## 📁 Estrutura do projeto
 
@@ -97,6 +109,8 @@ webapp/
 │   └── js/
 │       ├── cadastro.js
 │       ├── login.js
+│       ├── main.js
+│       ├── usuario.js
 │       ├── publicacoes.js
 │       ├── jquery.min.js
 │       └── bootstrap.min.js
@@ -104,38 +118,33 @@ webapp/
 ├── src/
 │   ├── config/
 │   │   └── config.go
-│   │
 │   ├── controllers/
 │   │   ├── login.go
+│   │   ├── logout.go
 │   │   ├── paginas.go
 │   │   ├── publicacoes.go
 │   │   └── usuarios.go
-│   │
 │   ├── cookies/
 │   │   └── cookies.go
-│   │
 │   ├── middlewares/
 │   │   └── middlewares.go
-│   │
 │   ├── modelos/
 │   │   ├── DadosAutenticacao.go
-│   │   └── Publicacao.go
-│   │
+│   │   ├── Publicacao.go
+│   │   └── Usuario.go
 │   ├── requisicoes/
 │   │   └── requisicoes.go
-│   │
 │   ├── respostas/
 │   │   └── respostas.go
-│   │
 │   ├── router/
 │   │   ├── router.go
 │   │   └── rotas/
 │   │       ├── home.go
 │   │       ├── login.go
+│   │       ├── logout.go
 │   │       ├── publicacoes.go
 │   │       ├── rotas.go
 │   │       └── usuarios.go
-│   │
 │   └── utils/
 │       └── templates.go
 │
@@ -143,6 +152,14 @@ webapp/
     ├── login.html
     ├── cadastro.html
     ├── home.html
+    ├── perfil.html
+    ├── usuario.html
+    ├── usuarios.html
+    ├── editar-usuario.html
+    ├── atualizar-senha.html
+    ├── atualizar-publicacao.html
+    ├── modal-seguidores.html
+    ├── modal-seguindo.html
     │
     └── templates/
         ├── cabecalho.html
@@ -153,83 +170,37 @@ webapp/
 
 ## 🔄 Fluxo da aplicação
 
-O fluxo principal da aplicação funciona da seguinte maneira:
-
 1. O usuário acessa o WebApp.
-2. O servidor Go carrega as configurações do ambiente.
+2. O servidor Go carrega as configurações do `.env`.
 3. Os templates HTML são carregados.
 4. O roteador registra as rotas da aplicação.
-5. O usuário realiza o login ou cadastro.
-6. O WebApp se comunica com a DevBook API através de requisições HTTP.
-7. Após o login, o token recebido pela API é armazenado em um cookie seguro.
-8. Nas operações autenticadas, o WebApp recupera o token do cookie.
-9. O token é enviado para a API no header `Authorization`.
-10. A resposta da API é processada pelo WebApp e apresentada ao usuário.
+5. O usuário realiza login ou cadastro.
+6. O WebApp encaminha as operações para a DevBook API.
+7. Após o login, o JWT retornado pela API é armazenado em um cookie seguro.
+8. O middleware verifica a sessão antes de liberar rotas protegidas.
+9. Nas operações autenticadas, o token é recuperado do cookie.
+10. O token é enviado para a API no header `Authorization`.
+11. A API processa a operação e retorna os dados.
+12. O WebApp renderiza a resposta ou atualiza a interface via AJAX.
 
 ## 🔐 Autenticação e sessão
 
-O WebApp não realiza diretamente a autenticação contra o banco de dados.
+A autenticação é realizada pela **DevBook API** utilizando JWT.
 
-Quando o usuário faz login:
-
-```text
-Browser
-   │
-   │ POST /login
-   ▼
-WebApp
-   │
-   │ POST /login
-   ▼
-DevBook API
-   │
-   │ JWT
-   ▼
-WebApp
-   │
-   │ Cookie seguro
-   ▼
-Browser
-```
-
-O token JWT retornado pela API é armazenado dentro do cookie `cookie-devbook`.
-
-Para proteger o conteúdo da sessão, o projeto utiliza:
-
-- `gorilla/securecookie`
-- `HASH_KEY`
-- `BLOCK_KEY`
-- Cookie `HttpOnly`
-- Cookie `Secure`
-
-O middleware `Autenticar` verifica a existência e validade do cookie antes de permitir o acesso às páginas protegidas.
-
-Quando a autenticação não está disponível, o usuário é redirecionado para:
-
-```text
-/login
-```
-
-## 🍪 Cookies
-
-A sessão do usuário é armazenada em um cookie chamado:
+O WebApp armazena o identificador do usuário e o token em um cookie chamado:
 
 ```text
 cookie-devbook
 ```
 
-O cookie contém:
+O cookie é protegido utilizando `gorilla/securecookie` e as chaves:
 
-```json
-{
-  "id": "ID_DO_USUARIO",
-  "token": "JWT"
-}
+```env
+HASH_KEY="your_secret_hash_key"
+BLOCK_KEY="your_secret_block_key"
 ```
 
-Os dados são codificados utilizando `securecookie`.
-
-As principais propriedades configuradas no cookie são:
+O cookie é configurado com:
 
 ```text
 HttpOnly: true
@@ -237,212 +208,327 @@ Secure: true
 Path: /
 ```
 
+O middleware `Autenticar` verifica o cookie antes de permitir acesso às rotas protegidas.
+
+Quando a sessão não é válida, o usuário é redirecionado para `/login`.
+
+## 🍪 Logout
+
+O logout é realizado através de:
+
+```text
+GET /logout
+```
+
+O WebApp remove o cookie da sessão e redireciona o usuário para a tela de login.
+
+## 👥 Gerenciamento de usuários
+
+A versão atual do WebApp possui uma camada mais completa de gerenciamento de usuários.
+
+### Busca
+
+O usuário autenticado pode pesquisar outros usuários através de:
+
+```text
+GET /buscar-usuarios
+```
+
+Os resultados apresentam nome, nickname e data de cadastro.
+
+### Perfil
+
+Cada usuário possui uma página própria:
+
+```text
+GET /usuarios/{usuarioId}
+```
+
+O perfil apresenta:
+
+- Nome
+- Nick
+- Data de cadastro
+- Quantidade de seguidores
+- Quantidade de usuários seguidos
+- Publicações
+- Ação para seguir ou deixar de seguir
+
+### Perfil do usuário autenticado
+
+```text
+GET /perfil
+```
+
+O perfil próprio permite consultar:
+
+- Dados pessoais
+- Seguidores
+- Usuários seguidos
+- Publicações
+- Edição de dados
+- Atualização de senha
+- Exclusão da conta
+
+### Seguidores
+
+O perfil apresenta modais para consultar:
+
+- Seguidores
+- Usuários que o perfil está seguindo
+
+O relacionamento pode ser alterado através das ações:
+
+```text
+POST /usuarios/{usuarioId}/seguir
+POST /usuarios/{usuarioId}/parar-de-seguir
+```
+
+## ✏️ Edição de usuário
+
+O WebApp disponibiliza uma página específica para edição dos dados:
+
+```text
+GET /editar-usuario
+```
+
+A atualização é enviada para:
+
+```text
+PUT /editar-usuario
+```
+
+Os dados tratados são:
+
+- Nome
+- E-mail
+- Nick
+
+## 🔑 Atualização de senha
+
+A aplicação possui uma tela específica para alteração da senha:
+
+```text
+GET /atualizar-senha
+```
+
+A atualização é realizada através de:
+
+```text
+POST /atualizar-senha
+```
+
+Antes de enviar a requisição, o JavaScript verifica se a nova senha e a confirmação são iguais.
+
+A validação final da senha continua sendo responsabilidade da API.
+
+## 🗑️ Exclusão de conta
+
+O usuário autenticado pode solicitar a exclusão permanente da própria conta:
+
+```text
+DELETE /deletar-usuario
+```
+
+A interface apresenta uma confirmação antes de executar a operação.
+
+Após a exclusão, o WebApp realiza o logout e retorna à tela de login.
+
+## 📝 Publicações
+
+O WebApp permite criar e gerenciar publicações.
+
+### Criar
+
+```text
+POST /publicacoes
+```
+
+### Curtir
+
+```text
+POST /publicacoes/{publicacaoId}/curtir
+```
+
+### Descurtir
+
+```text
+POST /publicacoes/{publicacaoId}/descurtir
+```
+
+### Atualizar
+
+A tela de edição é carregada por:
+
+```text
+GET /publicacoes/{publicacaoId}/atualizar
+```
+
+A alteração é enviada para:
+
+```text
+PUT /publicacoes/{publicacaoId}
+```
+
+### Excluir
+
+```text
+DELETE /publicacoes/{publicacaoId}
+```
+
+As operações de publicação utilizam AJAX, permitindo atualizar o estado da interface sem depender de um recarregamento completo da página.
+
 ## 🌐 Rotas
 
-### Login
+### Autenticação
 
-| Método | Rota | Autenticação | Descrição |
-|---|---|---|---|
-| `GET` | `/` | Não | Exibe a tela de login |
-| `GET` | `/login` | Não | Exibe a tela de login |
-| `POST` | `/login` | Não | Realiza o login através da API |
+| Método | Rota | Auth | Descrição |
+|---|---|---:|---|
+| `GET` | `/` | Não | Tela de login |
+| `GET` | `/login` | Não | Tela de login |
+| `POST` | `/login` | Não | Autenticação |
+| `GET` | `/logout` | Sim | Encerra a sessão |
 
-### Cadastro
+### Usuários
 
-| Método | Rota | Autenticação | Descrição |
-|---|---|---|---|
-| `GET` | `/criar-usuario` | Não | Exibe a tela de cadastro |
-| `POST` | `/criar-usuario` | Não | Cria um usuário através da API |
-
-### Página principal
-
-| Método | Rota | Autenticação | Descrição |
-|---|---|---|---|
-| `GET` | `/home` | Sim | Exibe o feed de publicações |
+| Método | Rota | Auth | Descrição |
+|---|---|---:|---|
+| `GET` | `/criar-usuario` | Não | Tela de cadastro |
+| `POST` | `/criar-usuario` | Não | Cria usuário |
+| `GET` | `/buscar-usuarios` | Sim | Pesquisa usuários |
+| `GET` | `/usuarios/{usuarioId}` | Sim | Visualiza perfil |
+| `POST` | `/usuarios/{usuarioId}/seguir` | Sim | Segue usuário |
+| `POST` | `/usuarios/{usuarioId}/parar-de-seguir` | Sim | Deixa de seguir |
+| `GET` | `/perfil` | Sim | Perfil do usuário autenticado |
+| `GET` | `/editar-usuario` | Sim | Tela de edição |
+| `PUT` | `/editar-usuario` | Sim | Atualiza dados |
+| `GET` | `/atualizar-senha` | Sim | Tela de alteração |
+| `POST` | `/atualizar-senha` | Sim | Atualiza senha |
+| `DELETE` | `/deletar-usuario` | Sim | Exclui conta |
 
 ### Publicações
 
-| Método | Rota | Autenticação | Descrição |
-|---|---|---|---|
-| `POST` | `/publicacoes` | Sim | Cria uma publicação |
-| `POST` | `/publicacoes/{publicacaoId}/curtir` | Sim | Curte uma publicação |
-| `POST` | `/publicacoes/{publicacaoId}/descurtir` | Sim | Remove uma curtida |
+| Método | Rota | Auth | Descrição |
+|---|---|---:|---|
+| `POST` | `/publicacoes` | Sim | Cria publicação |
+| `POST` | `/publicacoes/{publicacaoId}/curtir` | Sim | Curte publicação |
+| `POST` | `/publicacoes/{publicacaoId}/descurtir` | Sim | Remove curtida |
+| `GET` | `/publicacoes/{publicacaoId}/atualizar` | Sim | Tela de edição |
+| `PUT` | `/publicacoes/{publicacaoId}` | Sim | Atualiza publicação |
+| `DELETE` | `/publicacoes/{publicacaoId}` | Sim | Exclui publicação |
 
 ### Arquivos estáticos
 
-Os arquivos presentes em `assets/` são disponibilizados através da rota:
+Os arquivos de `assets/` são disponibilizados através de:
 
 ```text
 /assets/
 ```
 
-Exemplos:
+## ⚡ JavaScript e AJAX
 
-```text
-/assets/css/login.css
-/assets/js/login.js
-/assets/js/publicacoes.js
-```
+O frontend utiliza JavaScript e jQuery para realizar operações assíncronas.
 
-## 📡 Comunicação com a API
+### `login.js`
 
-O WebApp utiliza a variável `API_URL` e a porta definida em `API_PORT` para localizar a DevBook API.
+Responsável por:
 
-Por padrão:
+- Validar e-mail
+- Validar senha
+- Enviar login
+- Redirecionar para `/home`
 
-```text
-API_URL=http://localhost
+### `cadastro.js`
+
+Responsável por:
+
+- Validar confirmação da senha
+- Enviar cadastro
+- Exibir mensagens de sucesso e erro
+- Redirecionar para o login
+
+### `usuario.js`
+
+Centraliza as interações relacionadas aos usuários:
+
+- Seguir
+- Deixar de seguir
+- Editar dados
+- Atualizar senha
+- Excluir conta
+
+### `publicacoes.js`
+
+Gerencia:
+
+- Criação de publicações
+- Curtidas
+- Descurtidas
+- Atualização de publicações
+- Exclusão de publicações
+
+### `main.js`
+
+Responsável por identificar a rota atual e destacar o item correspondente no menu de navegação.
+
+## 🔔 Feedback da interface
+
+A versão atual utiliza **SweetAlert2** para apresentar mensagens de:
+
+- Sucesso
+- Erro
+- Avisos
+- Confirmação de ações irreversíveis
+
+Isso é utilizado especialmente em operações como:
+
+- Login
+- Cadastro
+- Seguir usuários
+- Atualizar dados
+- Atualizar senha
+- Excluir conta
+- Criar publicações
+- Atualizar publicações
+- Excluir publicações
+
+## 🖥️ Templates
+
+A aplicação utiliza `html/template` para renderização server-side.
+
+Além das páginas principais, existem templates reutilizáveis para:
+
+- Cabeçalho
+- Rodapé
+- Scripts
+- Publicações
+- Modal de seguidores
+- Modal de usuários seguidos
+
+Essa estrutura reduz duplicação de HTML e mantém componentes comuns centralizados.
+
+## 🚀 Comunicação com a API
+
+O WebApp utiliza:
+
+```env
+API_URL="http://localhost"
 API_PORT=5000
 ```
 
-A aplicação web, por sua vez, utiliza:
-
-```text
-APP_PORT=4000
-```
-
-Assim, em um ambiente local, a arquitetura pode ser executada como:
-
-```text
-WebApp
-http://localhost:4000
-
-        │
-        ▼
-
-API
-http://localhost:5000
-```
-
-## 🔁 Requisições autenticadas
-
-As requisições que exigem autenticação são realizadas pela função:
-
-```text
-FazerRequisicaoComAutenticacao
-```
-
-Ela recupera o token armazenado no cookie e adiciona o header:
+As requisições autenticadas recuperam o JWT do cookie e adicionam:
 
 ```http
 Authorization: Bearer SEU_TOKEN
 ```
 
-Isso permite que a API identifique o usuário responsável pela operação.
+A API continua sendo responsável pelas regras de negócio, validações e persistência.
 
-## 🖥️ Templates
-
-O projeto utiliza o pacote padrão `html/template` do Go.
-
-Os templates principais são:
-
-- `login.html`
-- `cadastro.html`
-- `home.html`
-
-Também existem templates reutilizáveis:
-
-- Cabeçalho
-- Rodapé
-- Scripts
-- Estrutura das publicações
-
-A aplicação carrega os templates utilizando:
-
-```go
-template.ParseGlob("views/*.html")
-template.ParseGlob("views/templates/*.html")
-```
-
-Isso permite reutilizar componentes HTML entre diferentes páginas.
-
-## ⚡ Interações com JavaScript
-
-A interface utiliza jQuery para realizar chamadas assíncronas.
-
-### Login
-
-O arquivo:
-
-```text
-assets/js/login.js
-```
-
-valida os campos de e-mail e senha e envia os dados para:
-
-```text
-POST /login
-```
-
-Após o login, o usuário é direcionado para:
-
-```text
-/home
-```
-
-### Cadastro
-
-O arquivo:
-
-```text
-assets/js/cadastro.js
-```
-
-realiza a validação da confirmação da senha e envia os dados para:
-
-```text
-POST /criar-usuario
-```
-
-Após o cadastro, o usuário é direcionado para:
-
-```text
-/login
-```
-
-### Publicações
-
-O arquivo:
-
-```text
-assets/js/publicacoes.js
-```
-
-é responsável pelas interações relacionadas às publicações.
-
-Ele permite:
-
-- Criar publicações
-- Curtir publicações
-- Remover curtidas
-- Atualizar visualmente o contador de curtidas
-
-As operações são realizadas sem a necessidade de recarregar manualmente a página para cada ação.
-
-## 🎨 Interface
-
-A interface utiliza:
-
-- **Bootstrap** para estrutura e componentes
-- **Font Awesome** para ícones
-- CSS próprio para as telas de autenticação
-- Templates do Go para renderização no servidor
-
-A página inicial apresenta:
-
-- Barra de navegação
-- Formulário de nova publicação
-- Lista de publicações
-- Informações do autor
-- Data da publicação
-- Contador de curtidas
-- Ações de curtida
+O WebApp atua como uma camada intermediária entre o navegador e a API.
 
 ## ⚙️ Configuração
 
-O projeto utiliza variáveis de ambiente.
-
-Crie um arquivo `.env` baseado no `example.env`:
+Crie um `.env` baseado no `example.env`:
 
 ```bash
 cp example.env .env
@@ -458,17 +544,15 @@ HASH_KEY="your_secret_hash_key"
 BLOCK_KEY="your_secret_block_key"
 ```
 
-### Variáveis
-
 | Variável | Descrição | Exemplo |
 |---|---|---|
-| `API_URL` | URL base da DevBook API | `http://localhost` |
+| `API_URL` | URL base da API | `http://localhost` |
 | `API_PORT` | Porta da API | `5000` |
 | `APP_PORT` | Porta do WebApp | `4000` |
-| `HASH_KEY` | Chave para assinatura dos cookies | chave secreta |
-| `BLOCK_KEY` | Chave para criptografia dos cookies | chave secreta |
+| `HASH_KEY` | Chave de assinatura dos cookies | chave secreta |
+| `BLOCK_KEY` | Chave de proteção dos cookies | chave secreta |
 
-> Nunca versione chaves reais ou credenciais no repositório. O arquivo `.env` deve permanecer fora do controle de versão.
+> Não versione credenciais ou chaves reais. O arquivo `.env` deve permanecer fora do controle de versão.
 
 ## 🚀 Executando o projeto
 
@@ -478,39 +562,27 @@ BLOCK_KEY="your_secret_block_key"
 - DevBook API em execução
 - Git
 
-### Clone o projeto
+### Instalação
 
 ```bash
 git clone https://github.com/johny83br/devbook.git
-```
-
-Acesse o diretório do WebApp:
-
-```bash
 cd devbook/webapp
-```
-
-Instale as dependências:
-
-```bash
 go mod download
 ```
 
-Configure o arquivo `.env`:
+Configure o ambiente:
 
 ```bash
 cp example.env .env
 ```
 
-Ajuste as configurações conforme o ambiente.
-
-### Execute
+Depois execute:
 
 ```bash
 go run .
 ```
 
-O WebApp será executado na porta configurada em:
+O WebApp será executado na porta definida em:
 
 ```env
 APP_PORT=4000
@@ -524,55 +596,57 @@ http://localhost:4000
 
 ## 🔗 Dependência da API
 
-O WebApp depende da **DevBook API** para realizar operações de autenticação, usuários e publicações.
+Para utilizar o ecossistema completo, a **DevBook API** deve estar disponível.
 
-Portanto, para utilizar a aplicação completa, a API deve estar disponível no endereço configurado em:
-
-```env
-API_URL
-API_PORT
-```
-
-Exemplo:
+Uma configuração local típica é:
 
 ```text
-WebApp → http://localhost:4000
-API    → http://localhost:5000
+WebApp
+http://localhost:4000
+       │
+       │ HTTP / JSON
+       ▼
+API
+http://localhost:5000
+       │
+       ▼
+MySQL
 ```
 
-## 🎯 Objetivos do projeto
+## 🎯 Conceitos demonstrados
 
-O projeto demonstra, na prática, conceitos importantes de desenvolvimento web com Go:
+O projeto demonstra conceitos importantes de desenvolvimento web com Go:
 
-- Criação de aplicações web com `net/http`
+- Desenvolvimento de aplicações web com `net/http`
 - Roteamento com Gorilla Mux
-- Renderização de HTML no servidor
-- Organização de controllers
-- Middlewares
-- Autenticação baseada em JWT
-- Gerenciamento de sessão através de cookies
-- Cookies protegidos com `securecookie`
-- Comunicação entre aplicações através de HTTP
+- Arquitetura cliente-servidor
+- Separação entre WebApp e API
+- Renderização server-side com Go Templates
+- Controllers e middlewares
 - Consumo de APIs REST
-- Uso de JSON
-- Requisições AJAX
+- Comunicação HTTP/JSON
+- Autenticação baseada em JWT
+- Gerenciamento de sessão com cookies
+- Proteção de cookies com SecureCookie
+- Operações assíncronas com AJAX
 - Integração entre Go e JavaScript
-- Separação entre frontend web e backend API
-- Configuração através de variáveis de ambiente
+- CRUD de usuários e publicações
+- Relacionamento entre usuários
+- Uso de variáveis de ambiente
+- Organização de código em pacotes
+- Uso de concorrência com goroutines para carregar dados de perfil em paralelo
 
 ## 📚 Relação com o DevBook API
 
-Este projeto faz parte do ecossistema **DevBook** e funciona em conjunto com a API.
+O WebApp e a API possuem responsabilidades distintas:
 
-A divisão de responsabilidades é:
-
-| Projeto | Responsabilidade |
+| Componente | Responsabilidade |
 |---|---|
-| `webapp` | Interface web, sessão, templates e interação com o usuário |
+| `webapp` | Interface, navegação, sessão, templates e interação com o usuário |
 | `api` | Regras de negócio, autenticação, usuários, publicações e persistência |
 | `MySQL` | Armazenamento dos dados |
 
-Essa estrutura permite separar a camada de apresentação da camada responsável pelos dados e regras da aplicação.
+Essa separação permite que o frontend web consuma os recursos da API sem acessar diretamente o banco de dados.
 
 ## 👨‍💻 Autor
 
@@ -585,4 +659,4 @@ Desenvolvedor de software.
 
 ---
 
-Projeto desenvolvido para estudos e prática de desenvolvimento web com Go, integração com APIs REST, autenticação e arquitetura em camadas.
+Projeto desenvolvido para estudos e prática de desenvolvimento web com Go, integração com APIs REST, autenticação, gerenciamento de sessão e arquitetura cliente-servidor.
