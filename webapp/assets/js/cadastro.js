@@ -13,7 +13,7 @@ function criarUsuario() {
   var confirmarSenha = $('#confirmar_senha').val();
 
   if (senha != confirmarSenha) {
-    Swal.fire('Erro', 'As senhas não conferem!', 'error');
+    Swal.fire('Ops...', 'As senhas não conferem!', 'error');
     return;
   }
 
@@ -39,13 +39,13 @@ function criarUsuario() {
         }).done(function () {
           window.location = '/home';
         }).fail(function () {
-          Swal.fire('Erro', 'Erro ao autenticar o usuário', 'error');
+          Swal.fire('Ops...', 'Erro ao autenticar o usuário', 'error');
         });
       });
     },
     error: function (jqXHR, textStatus, errorThrown) {
       console.error(jqXHR.responseJSON.error);
-      Swal.fire('Erro', 'Ocorreu um erro ao criar o usuário. Tente novamente.', 'error');
+      Swal.fire('Ops...', 'Ocorreu um erro ao criar o usuário. Tente novamente.', 'error');
     }
   });
 

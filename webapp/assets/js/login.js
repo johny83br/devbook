@@ -10,12 +10,12 @@ function fazerLogin() {
   var senha = $('#senha').val();
 
   if (email == "") {
-    Swal.fire('Erro', 'O e-mail é obrigatório!', 'error');
+    Swal.fire('Ops...', 'O e-mail é obrigatório!', 'error');
     return;
   }
 
   if (senha == "") {
-    Swal.fire('Erro', 'A senha é obrigatória!', 'error');
+    Swal.fire('Ops...', 'A senha é obrigatória!', 'error');
     return;
   }
 
@@ -31,7 +31,7 @@ function fazerLogin() {
     },
     error: function (jqXHR, textStatus, errorThrown) {
       console.error(jqXHR.responseJSON.error);
-      Swal.fire('Erro', 'Ocorreu um erro ao fazer login. Tente novamente.', 'error');
+      Swal.fire('Ops...', 'Ocorreu um erro ao fazer login. Tente novamente.', 'error');
     }
   });
 
