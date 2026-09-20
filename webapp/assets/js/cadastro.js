@@ -13,7 +13,7 @@ function criarUsuario() {
   var confirmarSenha = $('#confirmar_senha').val();
 
   if (senha != confirmarSenha) {
-    alert('As senhas não conferem!');
+    Swal.fire('Erro', 'As senhas não conferem!', 'error');
     return;
   }
 
@@ -28,12 +28,13 @@ function criarUsuario() {
       confirmar_senha: confirmarSenha
     },
     success: function () {
-      alert('Usuário criado com sucesso!');
-      window.location.href = '/login';
+      Swal.fire('Sucesso', 'Usuário criado com sucesso!', 'success').then(function () {
+        window.location.href = '/login';
+      });
     },
     error: function (jqXHR, textStatus, errorThrown) {
       console.error(jqXHR.responseJSON.error);
-      alert('Ocorreu um erro ao criar o usuário. Tente novamente.');
+      Swal.fire('Erro', 'Ocorreu um erro ao criar o usuário. Tente novamente.', 'error');
     }
   });
 

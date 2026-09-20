@@ -10,12 +10,12 @@ function fazerLogin() {
   var senha = $('#senha').val();
 
   if (email == "") {
-    alert('O e-mail é obrigatório!');
+    Swal.fire('Erro', 'O e-mail é obrigatório!', 'error');
     return;
   }
 
   if (senha == "") {
-    alert('A senha é obrigatória!');
+    Swal.fire('Erro', 'A senha é obrigatória!', 'error');
     return;
   }
 
@@ -27,12 +27,11 @@ function fazerLogin() {
       senha: senha
     },
     success: function () {
-      // alert('Login realizado com sucesso!');
       window.location.href = '/home';
     },
     error: function (jqXHR, textStatus, errorThrown) {
       console.error(jqXHR.responseJSON.error);
-      alert('Ocorreu um erro ao fazer login. Tente novamente.');
+      Swal.fire('Erro', 'Ocorreu um erro ao fazer login. Tente novamente.', 'error');
     }
   });
 

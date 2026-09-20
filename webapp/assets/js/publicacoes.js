@@ -70,7 +70,6 @@ function descurtirPublicacao(evento) {
     url: `/publicacoes/${publicacaoId}/descurtir`,
     method: "POST",
   }).done(function () {
-    // alert('Publicacação descurtida!');
 
     const contadorCurtidas = elementoClicado.next('span');
     const quantidadeDeCurtidas = parseInt(contadorCurtidas.text());
