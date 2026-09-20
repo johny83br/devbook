@@ -29,7 +29,18 @@ function criarUsuario() {
     },
     success: function () {
       Swal.fire('Sucesso', 'Usuário criado com sucesso!', 'success').then(function () {
-        window.location.href = '/login';
+        $.ajax({
+          url: '/login',
+          method: 'POST',
+          data: {
+            email: $('#email').val(),
+            senha: $('#senha').val(),
+          }
+        }).done(function () {
+          window.location = '/home';
+        }).fail(function () {
+          Swal.fire('Erro', 'Erro ao autenticar o usuário', 'error');
+        });
       });
     },
     error: function (jqXHR, textStatus, errorThrown) {
