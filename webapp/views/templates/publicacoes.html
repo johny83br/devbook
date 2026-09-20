@@ -1,6 +1,6 @@
 {{ define "curtidas" }}
-<i class="fa-solid fa-heart curtir-publicacao"></i>
-<span>{{ .Curtidas }} </span> Curtidas
+  <i class="fa-solid fa-heart curtir-publicacao" style="cursor: pointer;"></i>
+  <span>{{ .Curtidas }} </span> Curtidas
 {{ end }}
 
 {{ define "editar" }}
@@ -8,7 +8,7 @@
 {{ end }}
 
 {{ define "deletar" }}
-<a href="/deletar" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i> Deletar</a>
+<a href="javascript:void(0);" class="btn btn-sm btn-danger deletar-publicacao" data-publicacao-id="{{ .ID }}"><i class="fa-solid fa-trash"></i> Deletar</a>
 {{ end }}
 
 {{ define "cabecalho-publicacao" }}
